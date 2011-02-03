@@ -288,39 +288,38 @@ static const uint32_t RCON[10] =
 //==============================================================================
 // App: AES _key schedule (encryption)
 //==============================================================================
-uint16_t aes_set_key_enc(__aes_context * const _ctx,
-                        const uint8_t * const _key,
-                        const uint16_t _keysize)
+uint32_t aes_set_key_enc(__aes_context * const _ctx,
+                         const uint8_t * const _key,
+                         const uint32_t _keysize)
 {
-    uint16_t i;
+    uint32_t i;
     uint32_t * RK;
 
-    // По длинне ключа определяем количество раундов
     switch (_keysize)
     {
         //----------------------------------------------------------------------
         case 128:
           _ctx->nr = 10;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 192:
           _ctx->nr = 12;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 256:
           _ctx->nr = 14;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         default :
-          return (ERR_AES_INVALID_KEY_LENGTH);
+          return ERR_AES_INVALID_KEY_LENGTH;
     };
 
     _ctx->rk = RK = _ctx->buf;
 
-    for (uint16_t i = 0; i < (_keysize >> 5); i++) {
+    for (i = 0; i < (_keysize >> 5); i++) {
         GET_ULONG_LE(RK[i], _key, i << 2);
     };
 
@@ -328,7 +327,7 @@ uint16_t aes_set_key_enc(__aes_context * const _ctx,
     {
         //----------------------------------------------------------------------
         case 10:
-          for (i = 0UL; i < 10UL; i++, RK += 4) {
+          for (i = 0; i < 10; i++, RK += 4) {
               RK[4] = RK[0] ^ RCON[i] ^
               ((uint32_t) FSb[ (RK[3] >>  8) & 0xFF ]      ) ^
               ((uint32_t) FSb[ (RK[3] >> 16) & 0xFF ] <<  8) ^
@@ -339,11 +338,11 @@ uint16_t aes_set_key_enc(__aes_context * const _ctx,
               RK[6]  = RK[2] ^ RK[5];
               RK[7]  = RK[3] ^ RK[6];
           };
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 12:
-          for (i = 0UL; i < 8UL; i++, RK += 6) {
+          for (i = 0; i < 8; i++, RK += 6) {
               RK[6] = RK[0] ^ RCON[i] ^
               ((uint32_t) FSb[ (RK[5] >>  8) & 0xFF ]      ) ^
               ((uint32_t) FSb[ (RK[5] >> 16) & 0xFF ] <<  8) ^
@@ -356,36 +355,36 @@ uint16_t aes_set_key_enc(__aes_context * const _ctx,
               RK[10] = RK[4] ^ RK[9];
               RK[11] = RK[5] ^ RK[10];
           };
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 14:
-          for (i = 0UL; i < 7UL; i++, RK += 8) {
+          for (i = 0; i < 7; i++, RK += 8) {
               RK[8] = RK[0] ^ RCON[i] ^
               ((uint32_t) FSb[ (RK[7] >>  8) & 0xFF ]      ) ^
               ((uint32_t) FSb[ (RK[7] >> 16) & 0xFF ] <<  8) ^
               ((uint32_t) FSb[ (RK[7] >> 24) & 0xFF ] << 16) ^
               ((uint32_t) FSb[ (RK[7]      ) & 0xFF ] << 24);
 
-                RK[9] = RK[1] ^ RK[8];
-                RK[10] = RK[2] ^ RK[9];
-                RK[11] = RK[3] ^ RK[10];
+               RK[9] = RK[1] ^ RK[8];
+               RK[10] = RK[2] ^ RK[9];
+               RK[11] = RK[3] ^ RK[10];
 
-                RK[12] = RK[4] ^
-                ((uint32_t) FSb[ (RK[11]      ) & 0xFF ]      ) ^
-                ((uint32_t) FSb[ (RK[11] >>  8) & 0xFF ] <<  8) ^
-                ((uint32_t) FSb[ (RK[11] >> 16) & 0xFF ] << 16) ^
-                ((uint32_t) FSb[ (RK[11] >> 24) & 0xFF ] << 24);
+               RK[12] = RK[4] ^
+               ((uint32_t) FSb[ (RK[11]      ) & 0xFF ]      ) ^
+               ((uint32_t) FSb[ (RK[11] >>  8) & 0xFF ] <<  8) ^
+               ((uint32_t) FSb[ (RK[11] >> 16) & 0xFF ] << 16) ^
+               ((uint32_t) FSb[ (RK[11] >> 24) & 0xFF ] << 24);
 
-                RK[13] = RK[5] ^ RK[12];
-                RK[14] = RK[6] ^ RK[13];
-                RK[15] = RK[7] ^ RK[14];
-            };
-            break;
+               RK[13] = RK[5] ^ RK[12];
+               RK[14] = RK[6] ^ RK[13];
+               RK[15] = RK[7] ^ RK[14];
+          };
+        break;
 
         //----------------------------------------------------------------------
         default:
-          break;
+        break;
     };
 
     return 0;
@@ -397,43 +396,43 @@ uint16_t aes_set_key_enc(__aes_context * const _ctx,
 //==============================================================================
 // App: AES _key schedule (decryption)
 //==============================================================================
-uint16_t aes_set_key_dec(__aes_context * const _ctx,
-                        const uint8_t * const _key,
-                         const uint16_t _keysize)
+uint32_t aes_set_key_dec(__aes_context * const _ctx,
+                         const uint8_t * const _key,
+                         const uint32_t _keysize)
 {
-    uint16_t i, j;
+    uint32_t i, j;
     __aes_context cty;
     uint32_t * RK;
     uint32_t * SK;
-    uint16_t ret;
+    uint32_t ret;
 
     switch (_keysize)
     {
         //----------------------------------------------------------------------
         case 128:
           _ctx->nr = 10;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 192:
           _ctx->nr = 12;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         case 256:
           _ctx->nr = 14;
-          break;
+        break;
 
         //----------------------------------------------------------------------
         default :
-          return (ERR_AES_INVALID_KEY_LENGTH);
+          return ERR_AES_INVALID_KEY_LENGTH;
     };
 
     _ctx->rk = RK = _ctx->buf;
 
     ret = aes_set_key_enc(&cty, _key, _keysize);
     if (ret != 0) {
-        return(ret);
+        return ret;
     };
 
     SK = cty.rk + cty.nr * 4;
@@ -472,7 +471,7 @@ void aes_crypt_ecb(__aes_context * const _ctx,
                    uint8_t _input[16],
                    uint8_t _output[16])
 {
-    uint16_t i;
+    uint32_t i;
     uint32_t * RK, X0, X1, X2, X3, Y0, Y1, Y2, Y3;
 
     RK = _ctx->rk;
@@ -561,12 +560,12 @@ void aes_crypt_ecb(__aes_context * const _ctx,
 //==============================================================================
 void aes_crypt_cbc(__aes_context * const _ctx,
                    const bool_t _mode,
-                   uint16_t _length,
+                   uint32_t _length,
                    uint8_t * const _iv,
                    uint8_t * _input,
                    uint8_t * _output)
 {
-    uint16_t i;
+    uint32_t i;
     uint8_t temp[16];
 
     if (_mode == AES_DECRYPT) {
@@ -609,13 +608,14 @@ void aes_crypt_cbc(__aes_context * const _ctx,
 //==============================================================================
 void aes_crypt_cfb128(__aes_context * const _ctx,
                       const bool_t _mode,
-                      uint16_t _length,
-                      uint16_t * _iv_off,
+                      uint32_t _length,
+                      uint32_t * _iv_off,
                       uint8_t _iv[16],
                       uint8_t * _input,
                       uint8_t * _output)
 {
-    uint16_t c, n = *_iv_off;
+    uint32_t c;
+    uint32_t n = *_iv_off;
 
     if (_mode == AES_DECRYPT) {
         while (_length--) {

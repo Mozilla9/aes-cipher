@@ -36,7 +36,7 @@
 #define POLARSSL_HAVE_INT16
 #define AES_ENCRYPT                       TRUE_T
 #define AES_DECRYPT                       FALSE_T
-#define ERR_AES_INVALID_KEY_LENGTH        (0x0800)
+#define ERR_AES_INVALID_KEY_LENGTH        (0x00000800)
 
 
 /********************************** Macros ************************************/
@@ -109,7 +109,7 @@
 /************************* Prototypes struct for AES **************************/
 typedef struct
 {
-    uint16_t nr;           // number of rounds
+    uint32_t nr;           // number of rounds
     uint32_t * rk;         // AES round keys
     uint32_t buf[68];      // unaligned data
 } __aes_context;
@@ -121,9 +121,9 @@ typedef struct
 // param _key       encryption key
 // param _keysize   must be 128, 192 or 256
 // return           0 if successful, or ERR_AES_INVALID_KEY_LENGTH
-uint16_t aes_set_key_enc(__aes_context * _ctx,
+uint32_t aes_set_key_enc(__aes_context * _ctx,
                          const uint8_t * const _key,
-                         const uint16_t _keysize);
+                         const uint32_t _keysize);
 
 
 // AES _key schedule (decryption)
@@ -131,9 +131,9 @@ uint16_t aes_set_key_enc(__aes_context * _ctx,
 // param _key      decryption key
 // param _keysize  must be 128, 192 or 256
 // return          0 if successful, or ERR_AES_INVALID_KEY_LENGTH
-uint16_t aes_set_key_dec(__aes_context * const _ctx,
+uint32_t aes_set_key_dec(__aes_context * const _ctx,
                          const uint8_t * const _key,
-                         const uint16_t _keysize);
+                         const uint32_t _keysize);
 
 
 // AES-ECB block encryption/decryption
@@ -157,7 +157,7 @@ void aes_crypt_ecb(__aes_context * const _ctx,
 // param _outputs   buffer holding the outputs data
 void aes_crypt_cbc(__aes_context * const _ctx,
                    const bool_t _mode,
-                   uint16_t _length,
+                   uint32_t _length,
                    uint8_t * const _iv,
                    uint8_t * _inputs,
                    uint8_t * _outputs);
@@ -173,8 +173,8 @@ void aes_crypt_cbc(__aes_context * const _ctx,
 // param _outputs   buffer holding the _outputs data
 void aes_crypt_cfb128(__aes_context * const _ctx,
                       const bool_t _mode,
-                      uint16_t _length,
-                      uint16_t * _iv_off,
+                      uint32_t _length,
+                      uint32_t * _iv_off,
                       uint8_t _iv[16],
                       uint8_t * _inputs,
                       uint8_t * _outputs);
