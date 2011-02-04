@@ -21,22 +21,21 @@ static CIPHER Cipher;
 /*      main                                                                  */
 /*                                                                            */
 /******************************************************************************/
-int _tmain(int argc, char * argv[], char * envp[])
+int32_t _tmain(int32_t argc, int8_t ** argv, int8_t ** envp)
 {
     // Get settings
-    if (Cipher.GetSettFromCmdLine(argc, (const char **)argv) == FALSE_T) {
-        Cipher.PrintHelp();
+    if (Cipher.GetSettFromCmdLine(argc - 1, (const int8_t **)(argv + 1)) == FALSE_T) {
+        Cipher.PrintHelp(argv[0]);
         return 1;
     };
 
-    // Open files
+    // Open input file
     if (Cipher.OpenSourceFile() == FALSE_T) {
-        Cipher.PrintHelp();
         return 1;
     };
 
+    // Create output file
     if (Cipher.CreateDstFile() == FALSE_T) {
-        Cipher.PrintHelp();
         return 1;
     };
 

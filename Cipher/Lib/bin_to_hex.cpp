@@ -64,7 +64,7 @@ uint32_t BinToHex(const uint32_t _bin, uint8_t * const _pDst)
 //==============================================================================
 // App: Convert hex to bin
 //==============================================================================
-uint32_t HexToBin(const uint8_t * const _pHex)
+uint8_t HexToBin(const int8_t * _pHex)
 {
     uint8_t bin;
 

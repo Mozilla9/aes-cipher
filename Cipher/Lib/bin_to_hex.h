@@ -11,7 +11,7 @@
 uint32_t BinToHex(const uint8_t Bin, uint8_t * const pDst);
 uint32_t BinToHex(const uint16_t Bin, uint8_t * const pDst);
 uint32_t BinToHex(const uint32_t Bin, uint8_t * const pDst);
-uint32_t HexToBin(const uint8_t * const pHex);
+uint8_t HexToBin(const int8_t * pHex);
 
 
 #endif
