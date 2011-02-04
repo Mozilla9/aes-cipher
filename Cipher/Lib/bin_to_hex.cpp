@@ -46,7 +46,7 @@ uint32_t BinToHex(const uint16_t _bin, uint8_t * const _pDst)
 
 
 //==============================================================================
-// App: Перевод int32 to hex
+// App: Convert int32 to hex
 //==============================================================================
 uint32_t BinToHex(const uint32_t _bin, uint8_t * const _pDst)
 {
