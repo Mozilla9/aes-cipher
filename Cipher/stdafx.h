@@ -1,5 +1,9 @@
-#pragma once
+/******************************************************************************/
+/* stdafx.h                                                                   */
+/******************************************************************************/
 
+#ifndef __STDAFX_H
+#define __STDAFX_H
 
 
 #include "targetver.h"
@@ -20,3 +24,6 @@
 #include "Sources\cipher.h"
 #include "Sources\cipher_def.h"
 
+
+
+#endif

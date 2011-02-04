@@ -62,6 +62,7 @@ bool_t CIPHER::ExtractKey(std::string &_hexStr, std::vector <uint8_t> &_dstArray
 //==============================================================================
 //==============================================================================
 
+
 //==============================================================================
 // App: Print help
 //==============================================================================
@@ -144,7 +145,6 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
 
     std::string str;
 
-    // Parsing parameters
     if(_argc < 3) {
         return FALSE_T;
     }
@@ -185,7 +185,7 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
         return FALSE_T;
     };
 
-    // Option
+    // Key and vector
     switch (m_tools.opt)
     {
        //-----------------------------------------------------------------------
