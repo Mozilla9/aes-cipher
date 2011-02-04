@@ -1,6 +1,5 @@
 /******************************************************************************/
-/*  Company "3SD" 2011                                                        */
-/*  PROJECT "Firmware cipher for SmartBUG"                                    */
+/*  PROJECT "Firmware cipher"                                                 */
 /*  PO: S. Maslyakov, rusoil.9@gmail.com                                      */
 /*                                                                            */
 /*  Revision:     2.0                                                         */
