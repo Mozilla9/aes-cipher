@@ -50,7 +50,8 @@ class CIPHER : public HEXFILE
     //==========================================================================
     // App: Get settings from cmd line
     //==========================================================================
-    public: bool_t GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv);
+    public: bool_t GetSettFromCmdLine(const int32_t _argc,
+                                      const int8_t ** _argv);
     //==========================================================================
     //==========================================================================
 
@@ -89,7 +90,8 @@ class CIPHER : public HEXFILE
     //==========================================================================
     // App: Extract key (vector)
     //==========================================================================
-    private: bool_t ExtractKey(std::string& _hexStr, std::vector <uint8_t>& _dstArray);
+    private: bool_t ExtractKey(std::string& _hexStr,
+                               std::vector <uint8_t>& _dstArray);
     //==========================================================================
     //==========================================================================
 

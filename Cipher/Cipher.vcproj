@@ -250,20 +250,12 @@
 					RelativePath=".\Lib\aes.h"
 					>
 				</File>
-				<File
-					RelativePath=".\Lib\bin_to_hex.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Sources"
 				>
 				<File
 					RelativePath=".\Lib\aes.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Lib\bin_to_hex.cpp"
 					>
 				</File>
 			</Filter>

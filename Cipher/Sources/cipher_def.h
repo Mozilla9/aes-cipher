@@ -22,7 +22,8 @@ typedef enum
 typedef struct
 TOOLS_CIPHER
 {
-    TOOLS_CIPHER() : opt(eOPT_UNDEF), hexFileName(""), binFileName("") {}
+    TOOLS_CIPHER() : opt(eOPT_UNDEF), dirName(""),
+                     hexFileName(""), binFileName("") {}
 
     uint32_t opt;
     std::vector <uint8_t> key;

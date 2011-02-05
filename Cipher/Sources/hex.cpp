@@ -11,6 +11,23 @@
 using namespace std;
 
 
+
+//==============================================================================
+// App: Convert hex string to bin
+//==============================================================================
+uint8_t HEXFILE::HexToBin(const int8_t * _pHex) {
+    uint8_t bin;
+
+    bin = (_pHex[0] > 0x39) ? (_pHex[0] - 0x37) : (_pHex[0] - 0x30);
+    bin <<= 4;
+    bin |= (_pHex[1] > 0x39) ? (_pHex[1] - 0x37) : (_pHex[1] - 0x30);
+
+    return bin;
+}
+//==============================================================================
+//==============================================================================
+
+
 //==============================================================================
 // App: Open hex file
 //==============================================================================
@@ -212,7 +229,9 @@ uint32_t HEXFILE::RunConversion() {
 
                     // Test - need insert void data
                     if (recHeader.offset > m_tools.addr.data16[0]) {
-                        InsertVoidData(m_data.data, recHeader.offset - m_tools.addr.data16[0]);
+                        InsertVoidData(m_data.data,
+                                       recHeader.offset - m_tools.addr.data16[0]);
+
                         m_tools.addr.data16[0] = recHeader.offset;
                     };
 
@@ -226,7 +245,6 @@ uint32_t HEXFILE::RunConversion() {
 
             //------------------------------------------------------------------
             case eHEX_FILE_END:
-                // Unused rec, but collect info
                 if ((recHeader.len == 0) && (recHeader.offset == 0)) {
                     m_tools.isFileEnd = TRUE_T;
                 }
@@ -246,7 +264,9 @@ uint32_t HEXFILE::RunConversion() {
 
                     // Test - need insert void data
                     if (data.data32 > m_tools.addr.data32) {
-                        InsertVoidData(m_data.data, data.data32 - m_tools.addr.data32);
+                        InsertVoidData(m_data.data,
+                                       data.data32 - m_tools.addr.data32);
+
                         m_tools.addr.data32 = data.data32;
                     }
                     else if (data.data32 < m_tools.addr.data32) {
@@ -283,7 +303,9 @@ uint32_t HEXFILE::RunConversion() {
 
                         // Test - need insert void data
                         if (data.data32 > m_tools.addr.data32) {
-                            InsertVoidData(m_data.data, data.data32 - m_tools.addr.data32);
+                            InsertVoidData(m_data.data,
+                                           data.data32 - m_tools.addr.data32);
+
                             m_tools.addr.data32 = data.data32;
                         }
                         else if (data.data32 < m_tools.addr.data32) {
