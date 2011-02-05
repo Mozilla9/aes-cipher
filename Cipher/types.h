@@ -27,4 +27,17 @@ typedef double             float64_t;
 #define FALSE_T            false
 
 
+typedef union
+UNION_DWORD
+{
+    UNION_DWORD() : data32(0) {}
+
+    uint32_t  data32;
+    sint32_t  sdata32;
+    float32_t dataF;
+    uint16_t  data16[2];
+    uint8_t   data8[4];
+} __UNION_DWORD;
+
+
 #endif

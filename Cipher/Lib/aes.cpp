@@ -299,22 +299,22 @@ uint32_t aes_set_key_enc(__aes_context * const _ctx,
     {
         //----------------------------------------------------------------------
         case 128:
-          _ctx->nr = 10;
+            _ctx->nr = 10;
         break;
 
         //----------------------------------------------------------------------
         case 192:
-          _ctx->nr = 12;
+            _ctx->nr = 12;
         break;
 
         //----------------------------------------------------------------------
         case 256:
-          _ctx->nr = 14;
+            _ctx->nr = 14;
         break;
 
         //----------------------------------------------------------------------
         default :
-          return ERR_AES_INVALID_KEY_LENGTH;
+            return ERR_AES_INVALID_KEY_LENGTH;
     };
 
     _ctx->rk = RK = _ctx->buf;
@@ -327,59 +327,59 @@ uint32_t aes_set_key_enc(__aes_context * const _ctx,
     {
         //----------------------------------------------------------------------
         case 10:
-          for (i = 0; i < 10; i++, RK += 4) {
-              RK[4] = RK[0] ^ RCON[i] ^
-              ((uint32_t) FSb[ (RK[3] >>  8) & 0xFF ]      ) ^
-              ((uint32_t) FSb[ (RK[3] >> 16) & 0xFF ] <<  8) ^
-              ((uint32_t) FSb[ (RK[3] >> 24) & 0xFF ] << 16) ^
-              ((uint32_t) FSb[ (RK[3]      ) & 0xFF ] << 24);
+            for (i = 0; i < 10; i++, RK += 4) {
+                RK[4] = RK[0] ^ RCON[i] ^
+                ((uint32_t) FSb[ (RK[3] >>  8) & 0xFF ]      ) ^
+                ((uint32_t) FSb[ (RK[3] >> 16) & 0xFF ] <<  8) ^
+                ((uint32_t) FSb[ (RK[3] >> 24) & 0xFF ] << 16) ^
+                ((uint32_t) FSb[ (RK[3]      ) & 0xFF ] << 24);
 
-              RK[5]  = RK[1] ^ RK[4];
-              RK[6]  = RK[2] ^ RK[5];
-              RK[7]  = RK[3] ^ RK[6];
-          };
+                RK[5]  = RK[1] ^ RK[4];
+                RK[6]  = RK[2] ^ RK[5];
+                RK[7]  = RK[3] ^ RK[6];
+            };
         break;
 
         //----------------------------------------------------------------------
         case 12:
-          for (i = 0; i < 8; i++, RK += 6) {
-              RK[6] = RK[0] ^ RCON[i] ^
-              ((uint32_t) FSb[ (RK[5] >>  8) & 0xFF ]      ) ^
-              ((uint32_t) FSb[ (RK[5] >> 16) & 0xFF ] <<  8) ^
-              ((uint32_t) FSb[ (RK[5] >> 24) & 0xFF ] << 16) ^
-              ((uint32_t) FSb[ (RK[5]      ) & 0xFF ] << 24);
+            for (i = 0; i < 8; i++, RK += 6) {
+                RK[6] = RK[0] ^ RCON[i] ^
+                ((uint32_t) FSb[ (RK[5] >>  8) & 0xFF ]      ) ^
+                ((uint32_t) FSb[ (RK[5] >> 16) & 0xFF ] <<  8) ^
+                ((uint32_t) FSb[ (RK[5] >> 24) & 0xFF ] << 16) ^
+                ((uint32_t) FSb[ (RK[5]      ) & 0xFF ] << 24);
 
-              RK[7]  = RK[1] ^ RK[6];
-              RK[8]  = RK[2] ^ RK[7];
-              RK[9]  = RK[3] ^ RK[8];
-              RK[10] = RK[4] ^ RK[9];
-              RK[11] = RK[5] ^ RK[10];
-          };
+                RK[7]  = RK[1] ^ RK[6];
+                RK[8]  = RK[2] ^ RK[7];
+                RK[9]  = RK[3] ^ RK[8];
+                RK[10] = RK[4] ^ RK[9];
+                RK[11] = RK[5] ^ RK[10];
+            };
         break;
 
         //----------------------------------------------------------------------
         case 14:
-          for (i = 0; i < 7; i++, RK += 8) {
-              RK[8] = RK[0] ^ RCON[i] ^
-              ((uint32_t) FSb[ (RK[7] >>  8) & 0xFF ]      ) ^
-              ((uint32_t) FSb[ (RK[7] >> 16) & 0xFF ] <<  8) ^
-              ((uint32_t) FSb[ (RK[7] >> 24) & 0xFF ] << 16) ^
-              ((uint32_t) FSb[ (RK[7]      ) & 0xFF ] << 24);
+            for (i = 0; i < 7; i++, RK += 8) {
+                RK[8] = RK[0] ^ RCON[i] ^
+                ((uint32_t) FSb[ (RK[7] >>  8) & 0xFF ]      ) ^
+                ((uint32_t) FSb[ (RK[7] >> 16) & 0xFF ] <<  8) ^
+                ((uint32_t) FSb[ (RK[7] >> 24) & 0xFF ] << 16) ^
+                ((uint32_t) FSb[ (RK[7]      ) & 0xFF ] << 24);
 
-               RK[9] = RK[1] ^ RK[8];
-               RK[10] = RK[2] ^ RK[9];
-               RK[11] = RK[3] ^ RK[10];
+                RK[9] = RK[1] ^ RK[8];
+                RK[10] = RK[2] ^ RK[9];
+                RK[11] = RK[3] ^ RK[10];
 
-               RK[12] = RK[4] ^
-               ((uint32_t) FSb[ (RK[11]      ) & 0xFF ]      ) ^
-               ((uint32_t) FSb[ (RK[11] >>  8) & 0xFF ] <<  8) ^
-               ((uint32_t) FSb[ (RK[11] >> 16) & 0xFF ] << 16) ^
-               ((uint32_t) FSb[ (RK[11] >> 24) & 0xFF ] << 24);
+                RK[12] = RK[4] ^
+                ((uint32_t) FSb[ (RK[11]      ) & 0xFF ]      ) ^
+                ((uint32_t) FSb[ (RK[11] >>  8) & 0xFF ] <<  8) ^
+                ((uint32_t) FSb[ (RK[11] >> 16) & 0xFF ] << 16) ^
+                ((uint32_t) FSb[ (RK[11] >> 24) & 0xFF ] << 24);
 
-               RK[13] = RK[5] ^ RK[12];
-               RK[14] = RK[6] ^ RK[13];
-               RK[15] = RK[7] ^ RK[14];
-          };
+                RK[13] = RK[5] ^ RK[12];
+                RK[14] = RK[6] ^ RK[13];
+                RK[15] = RK[7] ^ RK[14];
+            };
         break;
 
         //----------------------------------------------------------------------
@@ -410,22 +410,22 @@ uint32_t aes_set_key_dec(__aes_context * const _ctx,
     {
         //----------------------------------------------------------------------
         case 128:
-          _ctx->nr = 10;
+            _ctx->nr = 10;
         break;
 
         //----------------------------------------------------------------------
         case 192:
-          _ctx->nr = 12;
+            _ctx->nr = 12;
         break;
 
         //----------------------------------------------------------------------
         case 256:
-          _ctx->nr = 14;
+            _ctx->nr = 14;
         break;
 
         //----------------------------------------------------------------------
         default :
-          return ERR_AES_INVALID_KEY_LENGTH;
+            return ERR_AES_INVALID_KEY_LENGTH;
     };
 
     _ctx->rk = RK = _ctx->buf;

@@ -7,15 +7,13 @@
 /******************************************************************************/
 
 #include "stdafx.h"
-
-
 using namespace std;
 
 
 //==============================================================================
 // App: Remove blank
 //==============================================================================
-bool_t CIPHER::RemoveBlank(std::string &_str) {
+bool_t CIPHER::RemoveBlank(std::string& _str) {
 
     // Extract param
     if ((_str.empty() == TRUE_T) || (_str.size() < 2)) {
@@ -40,7 +38,7 @@ bool_t CIPHER::RemoveBlank(std::string &_str) {
 //==============================================================================
 // App: Extract key (vector)
 //==============================================================================
-bool_t CIPHER::ExtractKey(std::string &_hexStr, std::vector <uint8_t> &_dstArray) {
+bool_t CIPHER::ExtractKey(std::string& _hexStr, std::vector <uint8_t>& _dstArray) {
 
     // Remove blank
     if (RemoveBlank(_hexStr) == FALSE_T) {
@@ -109,30 +107,36 @@ void CIPHER::PrintHelp(const std::string _self) {
 
 
 //==============================================================================
-// App: Open source file
+// App: Create dst file
 //==============================================================================
-bool_t CIPHER::OpenSourceFile() {
-    m_tools.hexFile.open(m_tools.hexFileName.c_str(), std::ios::in);
+bool_t CIPHER::CreateDstFile() {
+    const std::string str = m_tools.dirName + m_tools.binFileName;
+    m_tools.binFile.open(str.c_str(), fstream::in|fstream::out|fstream::trunc);
 
-    std::cout << "\nOpen hex file: " << (m_tools.hexFile.is_open())
+    std::cout << "\nCreate bin file: " << (m_tools.binFile.is_open())
                ? "ok\n" : "fail\n";
-    return (m_tools.hexFile.is_open()) ? TRUE_T : FALSE_T;
+    return (m_tools.binFile.is_open()) ? TRUE_T : FALSE_T;
 }
 //==============================================================================
 //==============================================================================
 
 
 //==============================================================================
-// App: Create dst file
+// App: Get dir
 //==============================================================================
-bool_t CIPHER::CreateDstFile() {
-    m_tools.binFile.open(m_tools.hexFileName.c_str(), fstream::in
-                                                     |fstream::out
-                                                     |fstream::trunc);
+void CIPHER::GetDir(const int8_t * const _dir) {
+    m_tools.dirName = _dir;
+    const uint32_t len = m_tools.dirName.size();
+    std::string::iterator it;
 
-    std::cout << "\nCreate bin file: " << (m_tools.binFile.is_open())
-               ? "ok\n" : "fail\n";
-    return (m_tools.binFile.is_open()) ? TRUE_T : FALSE_T;
+    // Dele chars from the end until it reaches '/' or '\'
+    for (uint32_t i = 0; i < len; i++) {
+        it = m_tools.dirName.end();
+        if (((it-1)[0] == '/') || ((it-1)[0] == '\\' )) {
+            break;
+        };
+        m_tools.dirName.erase(it - 1);
+    };
 }
 //==============================================================================
 //==============================================================================
@@ -145,23 +149,26 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
 
     std::string str;
 
-    if(_argc < 3) {
+    if(_argc < 4) {
         return FALSE_T;
-    }
+    };
+
+    // Dir
+    GetDir(_argv[0]);
 
     // Option
-    str = _argv[0];
+    str = _argv[1];
 
     if ((str == "-?") || (str == "--help")) {
         return FALSE_T;
     }
     else if ((str == "-e") || (str == "--encrypt")) {
-        if (_argc == 5) {
+        if (_argc == 6) {
             m_tools.opt = eOPT_CIPHER;
         };
     }
     else if ((str == "-b") || (str == "--bin")) {
-        if (_argc == 3) {
+        if (_argc == 4) {
             m_tools.opt = eOPT_BIN;
         };
     };
@@ -172,49 +179,109 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
     };
 
     // Input hex file name
-    str = _argv[1];
+    str = _argv[2];
     if (RemoveBlank(str) == FALSE_T) {
         std::cout << "\nBad input file name!\n";
         return FALSE_T;
     };
+    m_tools.hexFileName = str;
 
     // Output file name
-    str = _argv[2];
+    str = _argv[3];
     if (RemoveBlank(str) == FALSE_T) {
         std::cout << "\nBad output file name!\n";
         return FALSE_T;
     };
+    m_tools.binFileName = str;
 
     // Key and vector
     switch (m_tools.opt)
     {
-       //-----------------------------------------------------------------------
-       case eOPT_CIPHER:
-         // Extract key
-         str = _argv[3];
-         if (ExtractKey(str, m_tools.key) == FALSE_T) {
-            std::cout << "\nBad key!\n";
+        //----------------------------------------------------------------------
+        case eOPT_CIPHER:
+            // Extract key
+            str = _argv[4];
+            if (ExtractKey(str, m_tools.key) == FALSE_T) {
+                std::cout << "\nBad key!\n";
+                return FALSE_T;
+            };
+
+            // Extract vector
+            str = _argv[5];
+            if (ExtractKey(str, m_tools.vector) == FALSE_T) {
+                std::cout << "\nBad vector!\n";
+                return FALSE_T;
+            };
+        break;
+
+        //----------------------------------------------------------------------
+        case eOPT_BIN:
+        break;
+
+        //----------------------------------------------------------------------
+        default:
+            std::cout << "\nUndefined error!\n";
             return FALSE_T;
-         };
-
-         // Extract vector
-         str = _argv[3];
-         if (ExtractKey(str, m_tools.vector) == FALSE_T) {
-            std::cout << "\nBad vector!\n";
-            return FALSE_T;
-         };
-       break;
-
-       //-----------------------------------------------------------------------
-       case eOPT_BIN:
-       break;
-
-       //-----------------------------------------------------------------------
-       default:
-         std::cout << "\nUndefined error!\n";
-         return FALSE_T;
     };
 
+    return TRUE_T;
+}
+//==============================================================================
+//==============================================================================
+
+
+//==============================================================================
+// App: Convers hex to bin
+//==============================================================================
+bool_t CIPHER::ConversHexToBin() {
+    uint32_t err;
+
+    // Open input file
+    if (OpenHexFile(m_tools.dirName + m_tools.hexFileName) == FALSE_T) {
+        return 1;
+    };
+
+    // Create output file
+    if (CreateDstFile() == FALSE_T) {
+        return 1;
+    };
+
+    // Run conversion
+    err = RunConversion();
+    if (err != eHEX_OK) {
+        PrintError(err);
+        return FALSE_T;
+    };
+
+    // Copy data to bin file - buffered write
+    const std::vector <uint8_t>& data = GetData();
+    const std::vector <uint8_t>::size_type len = data.size();
+    std::vector <uint8_t>::size_type index = 0;
+    int8_t buff[65536];
+
+    while (index < len)
+    {
+        // Copy data in buff
+        const std::vector <uint8_t>::size_type _len = ((len - index) > 65536)
+                                                        ? 65536: (len - index);
+        for (std::vector <uint8_t>::size_type i = 0; i < _len; i++) {
+            buff[i] = data[index++];
+        };
+
+        // Write in file
+        m_tools.binFile.write((const int8_t *)buff, _len);
+    };
+
+    return TRUE_T;
+}
+//==============================================================================
+//==============================================================================
+
+
+//==============================================================================
+// App: Encript file
+//==============================================================================
+bool_t CIPHER::Encrypt() {
     return TRUE_T;
 }
 //==============================================================================

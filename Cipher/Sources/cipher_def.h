@@ -25,15 +25,13 @@ TOOLS_CIPHER
     TOOLS_CIPHER() : opt(eOPT_UNDEF), hexFileName(""), binFileName("") {}
 
     uint32_t opt;
-    std::vector <uint8_t> binData;
     std::vector <uint8_t> key;
     std::vector <uint8_t> vector;
-    std::fstream hexFile;
     std::fstream binFile;
+    std::string dirName;
     std::string hexFileName;
     std::string binFileName;
 } __TOOLS_CIPHER;
-
 
 
 

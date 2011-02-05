@@ -24,25 +24,14 @@ static CIPHER Cipher;
 int32_t _tmain(int32_t argc, int8_t ** argv, int8_t ** envp)
 {
     // Get settings
-    if (Cipher.GetSettFromCmdLine(argc - 1, (const int8_t **)(argv + 1)) == FALSE_T) {
+    if (Cipher.GetSettFromCmdLine(argc, (const int8_t **)argv) == FALSE_T) {
         Cipher.PrintHelp(argv[0]);
         return 1;
     };
 
-    // Open input file
-    if (Cipher.OpenSourceFile() == FALSE_T) {
+    // Run conversion
+    if (Cipher.ConversHexToBin() == FALSE_T) {
         return 1;
-    };
-
-    // Create output file
-    if (Cipher.CreateDstFile() == FALSE_T) {
-        return 1;
-    };
-
-    // Main loop
-    while(1)
-    {
-
     };
 
     return 0;
