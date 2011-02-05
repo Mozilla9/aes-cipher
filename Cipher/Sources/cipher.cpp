@@ -113,9 +113,12 @@ bool_t CIPHER::CreateDstFile() {
     const std::string str = m_tools.dirName + m_tools.binFileName;
     m_tools.binFile.open(str.c_str(), std::ios::in|std::ios::out|std::ios::trunc);
 
-    std::cout << "\nCreate bin file: " << (m_tools.binFile.is_open())
-               ? "ok\n" : "fail\n";
-    return (m_tools.binFile.is_open()) ? TRUE_T : FALSE_T;
+    if (!m_tools.binFile.is_open()) {
+        std::cout << "\nCant create " << str << "\n";
+        return FALSE_T;
+    };
+
+    return TRUE_T;
 }
 //==============================================================================
 //==============================================================================

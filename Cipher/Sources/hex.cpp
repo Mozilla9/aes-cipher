@@ -37,9 +37,12 @@ bool_t HEXFILE::OpenHexFile(const std::string& _name) {
         m_data.hexFile.open(_name.c_str(), std::ios::in);
     };
 
-    std::cout << "\nOpen hex file: " << (m_data.hexFile.is_open())
-               ? "ok\n" : "fail\n";
-    return (m_data.hexFile.is_open()) ? TRUE_T : FALSE_T;
+    if (!m_data.hexFile.is_open()) {
+        std::cout << "\nCant open " << _name << "\n";
+        return FALSE_T;
+    };
+
+    return TRUE_T;
 }
 //==============================================================================
 //==============================================================================
@@ -179,7 +182,7 @@ void HEXFILE::PrintError(const uint32_t _error) {
         break;
     };
 
-    std::cout << "\nError line: " << m_info.stringNum << "\n";
+    std::cout << "Line: " << m_info.stringNum << "\n";
     std::cout << "Error: " << err << "\n";
 }
 //==============================================================================
@@ -297,9 +300,10 @@ uint32_t HEXFILE::RunConversion() {
                 if (recHeader.len == 2) {
                     __UNION_DWORD data;
 
-                    if (isLinearAddrSet == TRUE_T) {
+                    if ((isLinearAddrSet == TRUE_T) || (m_info.stringNum > 1)) {
                         data.data8[3] = recHeader.rowData[0];
                         data.data8[2] = recHeader.rowData[1];
+
 
                         // Test - need insert void data
                         if (data.data32 > m_tools.addr.data32) {

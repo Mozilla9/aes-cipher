@@ -264,14 +264,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath=".\Hexfrmt.pdf"
-			>
-		</File>
-		<File
-			RelativePath=".\intel_hex.pdf"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
