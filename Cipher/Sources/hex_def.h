@@ -66,14 +66,14 @@ STAT_INFO_HEX
     uint32_t      crc;                  // Crc
     uint32_t      len;                  // Data len
     uint32_t      stringNum;            // Need for debug - make msg
-} __STAT_INFO_HEX;                      // info about hex file
+} __STAT_INFO_HEX;                      // Info about hex file
 
 
 typedef struct
 {
     std::vector <uint8_t> data;
     std::fstream          hexFile;
-} __DATA_HEX;                           // Tools for parsing Hex
+} __DATA_HEX;                           // Data for working Hex
 
 
 typedef struct
