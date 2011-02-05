@@ -19,6 +19,7 @@
 #include <string>
 
 #include "Lib\aes.h"
+#include "Lib\sfile.h"
 #include "Sources\hex.h"
 #include "Sources\hex_def.h"
 #include "Sources\cipher.h"

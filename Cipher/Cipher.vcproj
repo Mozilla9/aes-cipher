@@ -250,6 +250,10 @@
 					RelativePath=".\Lib\aes.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Lib\sfile.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Sources"

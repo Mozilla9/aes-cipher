@@ -111,7 +111,7 @@ void CIPHER::PrintHelp(const std::string _self) {
 //==============================================================================
 bool_t CIPHER::CreateDstFile() {
     const std::string str = m_tools.dirName + m_tools.binFileName;
-    m_tools.binFile.open(str.c_str(), fstream::in|fstream::out|fstream::trunc);
+    m_tools.binFile.open(str.c_str(), std::ios::in|std::ios::out|std::ios::trunc);
 
     std::cout << "\nCreate bin file: " << (m_tools.binFile.is_open())
                ? "ok\n" : "fail\n";
@@ -231,6 +231,35 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
 
 
 //==============================================================================
+// App: Create info file
+//==============================================================================
+void CIPHER::CreateInfoFile() {
+
+    SFILE Info(m_tools.dirName + "info.txt");
+    if (Info.Open() == 0) {
+        std::cout << "Cant create info file!\n";
+        return;
+    };
+
+    Info.GetFile() << "/*********************/\n";
+    Info.GetFile() << "/*        Info       */\n";
+    Info.GetFile() << "/*********************/\n";
+
+    Info.GetFile() << "File name: " << m_tools.binFileName << "\n";
+    Info.GetFile() << "File len: " << std::dec << GetLen() << "\n";
+    Info.GetFile() << "File crc: " << std::hex << GetCrc() << "\n";
+    Info.GetFile() << "\n";
+    Info.GetFile() << "Segment start addr: " << std::hex
+                   << GetSegmentStartAddr() << "\n";
+
+    Info.GetFile() << "Linear start addr: " << std::hex
+                   << GetLinearStartAddr() << "\n";
+}
+//==============================================================================
+//==============================================================================
+
+
+//==============================================================================
 // App: Convers hex to bin
 //==============================================================================
 bool_t CIPHER::ConversHexToBin() {
@@ -281,8 +310,10 @@ bool_t CIPHER::ConversHexToBin() {
 //==============================================================================
 // App: Encript file
 //==============================================================================
-bool_t CIPHER::Encrypt() {
-    return TRUE_T;
+void CIPHER::Encrypt() {
+    if (m_tools.opt != eOPT_CIPHER) {
+        return;
+    };
 }
 //==============================================================================
 //==============================================================================

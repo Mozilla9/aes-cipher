@@ -34,6 +34,11 @@ int32_t _tmain(int32_t argc, int8_t ** argv, int8_t ** envp)
         return 1;
     };
 
+    // Run encrypt
+
+    // Create info file
+    Cipher.CreateInfoFile();
+
     return 0;
 }
 /******************************************************************************/
