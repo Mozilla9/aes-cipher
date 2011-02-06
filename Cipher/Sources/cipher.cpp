@@ -67,7 +67,8 @@ void CIPHER::PrintHelp(const std::string _self) {
 
     std::cout << "\n";
     std::cout << "syntax: " << _self << " ";
-    std::cout << "[options] [input file] [output file] {[128b key] [128b vector]}\n";
+    std::cout << "[options] [input file]\n";
+    std::cout << "        [output file] {[128b key] [128b vector]}\n";
 
     std::cout << "\n";
     std::cout << "       options:\n";
@@ -97,9 +98,9 @@ void CIPHER::PrintHelp(const std::string _self) {
 
     std::cout << "\n";
     std::cout << "       Example of using:\n";
-    std::cout << "            cipher.exe -e -fw.hex -fw.bin "
-              << "-1A9F1A9FF1F18D7DD3D46DFFAABBCCEE "
-              << "-5A111111111111111111111111111133\r\n";
+    std::cout << "            cipher.exe -e -fw.hex -fw.bin\n";
+    std::cout << "            -1A9F1A9FF1F18D7DD3D46DFFAABBCCEE\n";
+    std::cout << "            -5A111111111111111111111111111133\r\n";
 }
 //==============================================================================
 //==============================================================================

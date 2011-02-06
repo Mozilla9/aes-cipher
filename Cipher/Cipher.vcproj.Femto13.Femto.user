@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory=""
-				CommandArguments="-e -gpstracker.hex -gpstracker.bin -11111111111111111111111111111111 -99999999999999999999999999999999"
+				CommandArguments="-e -gpstracker.hex -gpstracker.bin"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
