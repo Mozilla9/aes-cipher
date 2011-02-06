@@ -26,8 +26,8 @@ TOOLS_CIPHER
                      hexFileName(""), binFileName("") {}
 
     uint32_t opt;
-    std::vector <uint8_t> key;
-    std::vector <uint8_t> vector;
+    uint8_t key[16];
+    uint8_t vector[16];
     std::fstream binFile;
     std::string dirName;
     std::string hexFileName;

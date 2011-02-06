@@ -2,8 +2,8 @@
 /*  PROJECT "Firmware cipher"                                                 */
 /*  PO: S. Maslyakov, rusoil.9@gmail.com                                      */
 /*                                                                            */
-/*  Revision:     2.0                                                         */
-/*  Date:         2011/02/02 22:37:33                                         */
+/*  Revision:     2.1                                                         */
+/*  Date:         2011/02/06 21:49:33                                         */
 /******************************************************************************/
 
 
@@ -33,8 +33,6 @@ int32_t _tmain(int32_t argc, int8_t ** argv, int8_t ** envp)
     if (Cipher.ConversHexToBin() == FALSE_T) {
         return 1;
     };
-
-    // Run encrypt
 
     // Create info file
     Cipher.CreateInfoFile();

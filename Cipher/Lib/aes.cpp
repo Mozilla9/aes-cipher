@@ -568,6 +568,10 @@ void aes_crypt_cbc(__aes_context * const _ctx,
     uint32_t i;
     uint8_t temp[16];
 
+    if(_length % 16) {
+        return;
+    };
+
     if (_mode == AES_DECRYPT) {
         while (_length > 0) {
             memcpy(temp, _input, 16);

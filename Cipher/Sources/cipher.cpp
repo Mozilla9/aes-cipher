@@ -2,8 +2,8 @@
 /*  Class CIPHER                                                              */
 /*  PO: S. Maslyakov, rusoil.9@gmail.com                                      */
 /*                                                                            */
-/*  Revision:     1.0                                                         */
-/*  Date:         2011/02/03 14:17:33                                         */
+/*  Revision:     1.1                                                         */
+/*  Date:         2011/02/06 21:49:33                                         */
 /******************************************************************************/
 
 #include "stdafx.h"
@@ -38,7 +38,7 @@ bool_t CIPHER::RemoveBlank(std::string& _str) {
 //==============================================================================
 // App: Extract key (vector)
 //==============================================================================
-bool_t CIPHER::ExtractKey(std::string& _hexStr, std::vector <uint8_t>& _dstArray) {
+bool_t CIPHER::ExtractKey(std::string& _hexStr, uint8_t * _dstArray) {
 
     // Remove blank
     if (RemoveBlank(_hexStr) == FALSE_T) {
@@ -50,9 +50,8 @@ bool_t CIPHER::ExtractKey(std::string& _hexStr, std::vector <uint8_t>& _dstArray
         return FALSE_T;
     };
 
-    _dstArray.clear();
     for (uint32_t i = 0; i < 16; i++) {
-        _dstArray.push_back(HexToBin(_hexStr.c_str() + i*2));
+        _dstArray[i] = HexToBin(_hexStr.c_str() + i*2);
     };
 
     return TRUE_T;
@@ -111,7 +110,7 @@ void CIPHER::PrintHelp(const std::string _self) {
 //==============================================================================
 bool_t CIPHER::CreateDstFile() {
     const std::string str = m_tools.dirName + m_tools.binFileName;
-    m_tools.binFile.open(str.c_str(), std::ios::in|std::ios::out|std::ios::trunc);
+    m_tools.binFile.open(str.c_str(), std::ios::out|std::ios::binary|std::ios::trunc);
 
     if (!m_tools.binFile.is_open()) {
         std::cout << "\nCant create " << str << "\n";
@@ -181,7 +180,7 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
         return FALSE_T;
     };
 
-    // Input hex file name
+    // Input hex filename
     str = _argv[2];
     if (RemoveBlank(str) == FALSE_T) {
         std::cout << "\nBad input file name!\n";
@@ -189,13 +188,19 @@ bool_t CIPHER::GetSettFromCmdLine(const int32_t _argc, const int8_t ** _argv) {
     };
     m_tools.hexFileName = str;
 
-    // Output file name
+    // Output filename
     str = _argv[3];
     if (RemoveBlank(str) == FALSE_T) {
         std::cout << "\nBad output file name!\n";
         return FALSE_T;
     };
     m_tools.binFileName = str;
+
+    // Test filenames
+    if (m_tools.hexFileName == m_tools.binFileName) {
+        std::cout << "\nInput and output filenames must differ!\n";
+        return FALSE_T;
+    };
 
     // Key and vector
     switch (m_tools.opt)
@@ -252,11 +257,10 @@ void CIPHER::CreateInfoFile() {
     Info.GetFile() << "File len: " << std::dec << GetLen() << "\n";
     Info.GetFile() << "File crc: " << std::hex << GetCrc() << "\n";
     Info.GetFile() << "\n";
-    Info.GetFile() << "Segment start addr: " << std::hex
-                   << GetSegmentStartAddr() << "\n";
-
     Info.GetFile() << "Linear start addr: " << std::hex
                    << GetLinearStartAddr() << "\n";
+    Info.GetFile() << "Segment start addr: " << std::hex
+                   << GetSegmentStartAddr() << "\n";
 }
 //==============================================================================
 //==============================================================================
@@ -285,11 +289,29 @@ bool_t CIPHER::ConversHexToBin() {
         return FALSE_T;
     };
 
-    // Copy data to bin file - buffered write
+    // Process row data
+    if (m_tools.opt == eOPT_CIPHER) {
+        EncryptRowData();
+    }
+    else {
+        CopyRowData();
+    };
+
+    return TRUE_T;
+}
+//==============================================================================
+//==============================================================================
+
+
+//==============================================================================
+// App: Copy row data in file
+//==============================================================================
+void CIPHER::CopyRowData() {
+
+    int8_t buff[65536];
     const std::vector <uint8_t>& data = GetData();
     const std::vector <uint8_t>::size_type len = data.size();
     std::vector <uint8_t>::size_type index = 0;
-    int8_t buff[65536];
 
     while (index < len)
     {
@@ -303,8 +325,6 @@ bool_t CIPHER::ConversHexToBin() {
         // Write in file
         m_tools.binFile.write((const int8_t *)buff, _len);
     };
-
-    return TRUE_T;
 }
 //==============================================================================
 //==============================================================================
@@ -313,10 +333,59 @@ bool_t CIPHER::ConversHexToBin() {
 //==============================================================================
 // App: Encript file
 //==============================================================================
-void CIPHER::Encrypt() {
-    if (m_tools.opt != eOPT_CIPHER) {
+void CIPHER::EncryptRowData() {
+
+    uint8_t rowBuff[65536];
+    uint8_t decBuff[65536];
+    __aes_context ctx;
+    uint32_t temp;
+
+    // Set key
+    if (aes_set_key_enc(&ctx, m_tools.key, 128)) {
         return;
     };
+
+    // Encrypt
+    const std::vector <uint8_t>& data = GetData();
+    const std::vector <uint8_t>::size_type len = data.size();
+    std::vector <uint8_t>::size_type index = 0;
+
+    while (index < len)
+    {
+        // Copy data in buff
+        uint32_t allignLen;
+        const std::vector <uint8_t>::size_type _len = ((len - index) > 65536)
+                                                        ? 65536: (len - index);
+        for (std::vector <uint8_t>::size_type i = 0; i < _len; i++) {
+            rowBuff[i] = data[index++];
+        };
+
+        allignLen = _len;
+        while (allignLen % 16) {
+            rowBuff[allignLen++] = 0;
+        };
+
+        aes_crypt_cbc(&ctx, AES_ENCRYPT,
+                      allignLen, m_tools.vector,
+                      rowBuff, decBuff);
+
+        m_tools.binFile.write((const int8_t *)decBuff, allignLen);
+    };
+
+    // Add crc and data len row data in file end - optional (need for my project)
+    memset(rowBuff, 0, 16);
+
+    temp = GetLen();
+    memcpy(rowBuff, (uint8_t *)&temp, 4);
+
+    temp = GetCrc();
+    memcpy(rowBuff + 4, (uint8_t *)&temp, 4);
+
+    aes_crypt_cbc(&ctx, AES_ENCRYPT,
+                  16, m_tools.vector,
+                  rowBuff, decBuff);
+
+    m_tools.binFile.write((const int8_t *)decBuff, 16);
 }
 //==============================================================================
 //==============================================================================
