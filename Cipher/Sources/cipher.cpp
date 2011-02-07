@@ -337,7 +337,7 @@ void CIPHER::CopyRowData() {
 void CIPHER::EncryptRowData() {
 
     uint8_t rowBuff[65536];
-    uint8_t decBuff[65536];
+    uint8_t encBuff[65536];
     __aes_context ctx;
     uint32_t temp;
 
@@ -368,9 +368,9 @@ void CIPHER::EncryptRowData() {
 
         aes_crypt_cbc(&ctx, AES_ENCRYPT,
                       allignLen, m_tools.vector,
-                      rowBuff, decBuff);
+                      rowBuff, encBuff);
 
-        m_tools.binFile.write((const int8_t *)decBuff, allignLen);
+        m_tools.binFile.write((const int8_t *)encBuff, allignLen);
     };
 
     // Add crc and data len row data in file end - optional (need for my project)
@@ -384,9 +384,9 @@ void CIPHER::EncryptRowData() {
 
     aes_crypt_cbc(&ctx, AES_ENCRYPT,
                   16, m_tools.vector,
-                  rowBuff, decBuff);
+                  rowBuff, encBuff);
 
-    m_tools.binFile.write((const int8_t *)decBuff, 16);
+    m_tools.binFile.write((const int8_t *)encBuff, 16);
 }
 //==============================================================================
 //==============================================================================
