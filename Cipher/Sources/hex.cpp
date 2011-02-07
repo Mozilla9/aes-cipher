@@ -195,9 +195,6 @@ void HEXFILE::PrintError(const uint32_t _error) {
 //==============================================================================
 uint32_t HEXFILE::RunConversion() {
 
-    static bool_t isLinearAddrSet = FALSE_T;
-
-
     if (!m_data.hexFile.is_open()) {
         return eHEX_FILE;
     };
@@ -236,13 +233,13 @@ uint32_t HEXFILE::RunConversion() {
                         InsertVoidData(m_data.data,
                                        recHeader.offset - m_tools.addr.data16[0]);
 
-                        m_tools.addr.data16[0] = recHeader.offset;
+                        m_tools.addr.data32 += (uint32_t)recHeader.offset;
                     };
 
                     // Insert data
                     for (uint32_t i = 0; i < len; i++) {
                         m_data.data.push_back(recHeader.rowData[i]);
-                        m_tools.addr.data16[0]++;
+                        m_tools.addr.data32++;
                     };
                 };
             break;
@@ -301,23 +298,23 @@ uint32_t HEXFILE::RunConversion() {
                 if (recHeader.len == 2) {
                     __UNION_DWORD data;
 
-                    if ((isLinearAddrSet == TRUE_T) || (m_info.stringNum > 1)) {
-                        data.data8[3] = recHeader.rowData[0];
-                        data.data8[2] = recHeader.rowData[1];
+                    // Read new linear addr + set shifr
+                    data.data8[3] = recHeader.rowData[0];
+                    data.data8[2] = recHeader.rowData[1];
 
+                    if (m_info.stringNum > 1) {
 
                         // Test - need insert void data
                         if (data.data32 > m_tools.addr.data32) {
                             InsertVoidData(m_data.data,
                                            data.data32 - m_tools.addr.data32);
 
-                            m_tools.addr.data32 = data.data32;
                         }
                         else if (data.data32 < m_tools.addr.data32) {
                             return eHEX_LINEAR_ADDR_LESS_CURR_ADDR;
                         };
                     };
-                    isLinearAddrSet = TRUE_T;
+                    m_tools.addr.data32 = data.data32;
                 }
                 else {
                     return eHEX_BAD_REC_LEN;
