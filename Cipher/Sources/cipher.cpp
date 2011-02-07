@@ -340,6 +340,7 @@ void CIPHER::EncryptRowData() {
     uint8_t encBuff[65536];
     __aes_context ctx;
     uint32_t temp;
+    uint32_t allignLen;
 
     // Set key
     if (aes_set_key_enc(&ctx, m_tools.key, 128)) {
@@ -354,7 +355,6 @@ void CIPHER::EncryptRowData() {
     while (index < len)
     {
         // Copy data in buff
-        uint32_t allignLen;
         const std::vector <uint8_t>::size_type _len = ((len - index) > 65536)
                                                         ? 65536: (len - index);
         for (std::vector <uint8_t>::size_type i = 0; i < _len; i++) {
@@ -362,7 +362,8 @@ void CIPHER::EncryptRowData() {
         };
 
         allignLen = _len;
-        while (allignLen % 16) {
+        //while (allignLen % 16) {
+        while (allignLen % 256) {
             rowBuff[allignLen++] = 0;
         };
 
@@ -371,12 +372,13 @@ void CIPHER::EncryptRowData() {
                       rowBuff, encBuff);
 
         m_tools.binFile.write((const int8_t *)encBuff, allignLen);
+        allignLen = allignLen - _len;
     };
 
     // Add crc and data len row data in file end - optional (need for my project)
     memset(rowBuff, 0, 16);
 
-    temp = GetLen();
+    temp = GetLen() + allignLen;
     memcpy(rowBuff, (uint8_t *)&temp, 4);
 
     temp = GetCrc();
