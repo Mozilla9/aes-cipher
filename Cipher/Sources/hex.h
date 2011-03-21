@@ -59,6 +59,7 @@ public:
 private:
     uint32_t ReadString(__RECLEN_HEADER_HEX& _recHeader);
     void InsertVoidData(std::vector <uint8_t>& _dst, const std::size_t _count);
+
     __DATA_HEX          m_data;
     __PARSING_TOOLS_HEX m_tools;
     __STAT_INFO_HEX     m_info;
